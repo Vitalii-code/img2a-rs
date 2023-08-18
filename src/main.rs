@@ -11,39 +11,52 @@ fn main() {
         eprintln!("No arguments");
     } else {
         for arg in args.iter().skip(1) {
-            convert_to_ascii(&arg);
+            to_ascii(&arg);
         }
     }
 }
 
-fn convert_to_ascii(image_path: &str) {
+struct Cluster {
+    width: u32,
+    height: u32,
+}
+
+fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
+    // calculating cluster size
+    let terminal_size = get_terminal_size();
+
+    // we need to get image resolution ratio
+    let ratio = image_size.0 as f64 / image_size.1 as f64;
+
+    let cluster = Cluster {
+        width: (image_size.0 as f64 / terminal_size.0 as f64 * ratio) as u32,
+        height: image_size.1 / terminal_size.1 as u32,
+    };
+
+    return cluster;
+}
+
+fn to_ascii(image_path: &str) {
     let image = match image::open(image_path) {
         Ok(image) => image,
         Err(e) => return eprintln!("{}", e),
     };
 
-    let terminal_size = get_terminal_size();
-    println!("{:?}", terminal_size);
-
     let palette: String = " .:-=+*#%@".to_string();
-    //let palette =  r"$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,^`'. ".chars().rev().collect::<String>();
     let image_size = image.dimensions();
-
-    // calculating cluster size
-    let cluster_width = image_size.0 / terminal_size.0 as u32 * 3;
-    let cluster_height = image_size.1 / terminal_size.1 as u32 * 2;
+    let cluster: Cluster = calculate_clustersize(image_size);
 
     let mut y = 0;
-    while image_size.1 >= y + cluster_height {
+    while image_size.1 >= y + cluster.height {
         let mut x = 0;
-        while image_size.0 >= x + cluster_width {
-            let brightness = get_brightness_of_cluster(&image, x, y, cluster_width, cluster_height);
+        while image_size.0 >= x + cluster.width {
+            let brightness = get_brightness_of_cluster(&image, x, y, cluster.width, cluster.height);
 
             print!("{}", pick_char_from_palette(brightness, 255, &palette));
-            x += cluster_width;
+            x += cluster.width;
         }
         println!();
-        y += cluster_height;
+        y += cluster.height;
     }
 }
 
