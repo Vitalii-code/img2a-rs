@@ -76,15 +76,16 @@ fn get_brightness_of_cluster(
     image: &DynamicImage,
     x: u32,
     y: u32,
-    cluser_width: u32,
+    cluster_width: u32,
     cluster_height: u32,
 ) -> usize {
     // this function return medium brightness of cluster of pixels
-    let mut list_of_lums = Vec::new(); // list that store lums of pixels
+    let list_size: usize = (cluster_width * cluster_height) as usize;
+    let mut list_of_lums = Vec::with_capacity(list_size);
 
     for y in y..y + cluster_height {
-        for i in x..x + cluser_width {
-            let pixel = image.get_pixel(i, y).to_luma();
+        for x in x..x + cluster_width {
+            let pixel = image.get_pixel(x, y).to_luma();
             list_of_lums.push(pixel.0[0]);
         }
     }
