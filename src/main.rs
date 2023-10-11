@@ -2,6 +2,9 @@ use image::{DynamicImage, GenericImageView, Pixel};
 use std::env;
 use terminal_size::{terminal_size, Height, Width};
 
+#[cfg(test)]
+mod test;
+
 fn main() {
     // collect args
     let args: Vec<String> = env::args().collect();
@@ -106,3 +109,4 @@ fn get_terminal_size() -> (u16, u16) {
         panic!("Can't get terminal size")
     }
 }
+
