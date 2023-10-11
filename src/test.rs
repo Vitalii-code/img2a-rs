@@ -1,11 +1,12 @@
 use image::flat::Error;
-
 use super::*;
 
 #[test]
 fn my_test() {
-    generate("src/imgs/image.png", (1000, 500)).unwrap();
-    to_ascii("src/imgs/image.png");
+    for i in 1..2000 {
+        generate("imgs/image.png", (i, 500)).unwrap();
+        to_ascii("imgs/image.png");
+    }
 }
 
 
