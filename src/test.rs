@@ -5,8 +5,8 @@ use rand::prelude::*;
 
 #[test]
 fn my_test() {
-    for w in (80..1000).step_by(6) {
-        for h in (80..1000).step_by(8) {
+    for w in (1..100).step_by(6) {
+        for h in (1..100).step_by(8) {
             let img_path = format!("imgs/{}x{}_image.png", w, h) ; 
             generate(&img_path, (w, h)).unwrap();
             println!("{}", img_path);
