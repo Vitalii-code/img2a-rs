@@ -18,7 +18,7 @@ fn main() {
         }
     }
 }
-
+#[derive(Debug)]
 struct Cluster {
     width: u32,
     height: u32,
@@ -29,12 +29,20 @@ fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
     let terminal_size = get_terminal_size();
 
     // we need to get image resolution ratio
-    let ratio = image_size.0 as f64 / image_size.1 as f64;
+    // let ratio = image_size.0 as f64 / image_size.1 as f64;
+
+    if terminal_size.0 as u32 >= image_size.0 || terminal_size.1 as u32 >= image_size.1 {
+        return Cluster { 
+            width: 1,
+            height: 1
+        }
+    }
 
     let cluster = Cluster {
-        width: (image_size.0 as f64 / terminal_size.0 as f64 * ratio) as u32,
-        height: image_size.1 / terminal_size.1 as u32,
+        width: (image_size.0 / terminal_size.0 as u32 * 2),
+        height: (image_size.1 / terminal_size.1 as u32 * 1),
     };
+
 
     return cluster;
 }
