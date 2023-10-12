@@ -32,17 +32,16 @@ fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
     // let ratio = image_size.0 as f64 / image_size.1 as f64;
 
     if terminal_size.0 as u32 >= image_size.0 || terminal_size.1 as u32 >= image_size.1 {
-        return Cluster { 
+        return Cluster {
             width: 1,
-            height: 1
-        }
+            height: 1,
+        };
     }
 
     let cluster = Cluster {
         width: image_size.0 / terminal_size.0 as u32 * 2,
         height: image_size.1 / terminal_size.1 as u32 * 3,
     };
-
 
     return cluster;
 }
@@ -117,4 +116,3 @@ fn get_terminal_size() -> (u16, u16) {
         panic!("Can't get terminal size")
     }
 }
-

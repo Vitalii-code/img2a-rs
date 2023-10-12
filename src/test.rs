@@ -1,29 +1,27 @@
-use std::path::Path;
-use image::flat::Error;
 use super::*;
+use image::flat::Error;
 use rand::prelude::*;
+use std::path::Path;
 
 #[test]
 fn my_test() {
     for w in (1..100).step_by(6) {
         for h in (1..100).step_by(8) {
-            let img_path = format!("imgs/{}x{}_image.png", w, h) ; 
+            let img_path = format!("imgs/{}x{}_image.png", w, h);
             generate(&img_path, (w, h)).unwrap();
             println!("{}", img_path);
             to_ascii(&img_path);
-
         }
     }
 }
 
-
-fn generate(path: &str, image_size: (u32, u32)) -> Result<(),Error>{
+fn generate(path: &str, image_size: (u32, u32)) -> Result<(), Error> {
     // This function generates an image for testing
     let mut rng = thread_rng();
 
     // if image exist then skip
     if Path::new(path).exists() == true {
-        return Ok(())
+        return Ok(());
     }
     // Create a new ImgBuf with width: imgx and height: imgy
     let mut imgbuf = image::ImageBuffer::new(image_size.0, image_size.1);
@@ -39,6 +37,6 @@ fn generate(path: &str, image_size: (u32, u32)) -> Result<(),Error>{
 
     // Save the image as “fractal.png”, the format is deduced from the path
     imgbuf.save(path).unwrap();
-    
+
     Ok(())
 }
