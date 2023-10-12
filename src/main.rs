@@ -39,8 +39,8 @@ fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
     }
 
     let cluster = Cluster {
-        width: (image_size.0 / terminal_size.0 as u32 * 2),
-        height: (image_size.1 / terminal_size.1 as u32 * 1),
+        width: image_size.0 / terminal_size.0 as u32 * 2,
+        height: image_size.1 / terminal_size.1 as u32 * 3,
     };
 
 
