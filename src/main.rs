@@ -33,8 +33,10 @@ fn main() {
             } else if arg == "-h" || arg == "--help" {
                 println!("{}", HELP);
             } else {
-                let ascii = to_ascii(&arg, colour);
-                println!("{}", ascii)
+                match to_ascii(&arg, colour) {
+                    Ok(ascii) => println!("{}", ascii),
+                    Err(e) => eprintln!("{} occurred during convertation of {}", e, arg),
+                };
             }
         }
     }
@@ -66,10 +68,10 @@ fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
     return cluster;
 }
 
-fn to_ascii(image_path: &str, colour: bool) -> String {
+fn to_ascii(image_path: &str, colour: bool) -> Result<String, image::ImageError> {
     let mut ascii = String::new();
 
-    let image = image::open(image_path).unwrap();
+    let image = image::open(image_path)?;
 
     let palette = String::from(" .:-=+*#%@");
     let image_size = image.dimensions();
@@ -99,7 +101,7 @@ fn to_ascii(image_path: &str, colour: bool) -> String {
         y += cluster.height;
     }
 
-    return ascii;
+    return Ok(ascii);
 }
 
 fn pick_char_from_palette(value: usize, max_value: usize, palette: &String) -> char {
