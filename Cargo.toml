@@ -1,9 +1,13 @@
 [package]
+authors = ["Vitalii Kmit <vitalikkmita@gmail.com>"]
+description = "img2a is a utility that converts images into ASCII art, written in Rust programming language"
 name = "img2a"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+website = "https://github.com/Vitalya-code/img2a-rs"
+license = "GPL3"
+readme = "README.md"
+repository = "https://github.com/Vitalya-code/img2a-rs"
 
 [dependencies]
 image = "0.24.7"

@@ -3,6 +3,7 @@ mod convert;
 use crate::convert::to_ascii;
 #[cfg(test)]
 mod test;
+// use arboard::Clipboard;
 
 const HELP: &str = "
 Usage: img2a [option] [images...]
@@ -18,6 +19,8 @@ Options:
 fn main() {
     // collect args
     let args: Vec<String> = env::args().collect();
+    // let mut clipboard = Clipboard::new().unwrap();
+    // clipboard.set_text(ascii).unwrap();
 
     // if there is no args print error
     if args.len() <= 1 {
@@ -33,6 +36,7 @@ fn main() {
             } else {
                 match to_ascii(&arg, colour) {
                     Ok(ascii) => println!("{}", ascii),
+
                     Err(e) => eprintln!("{} occurred during convertation of '{}'", e, arg),
                 };
             }
