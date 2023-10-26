@@ -35,7 +35,7 @@ fn main() {
             } else {
                 match to_ascii(&arg, colour) {
                     Ok(ascii) => println!("{}", ascii),
-                    Err(e) => eprintln!("{} occurred during convertation of {}", e, arg),
+                    Err(e) => eprintln!("{} occurred during convertation of '{}'", e, arg),
                 };
             }
         }
@@ -62,7 +62,7 @@ fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
 
     let cluster = Cluster {
         width: image_size.0 / terminal_size.0 as u32 * 2,
-        height: image_size.1 / terminal_size.1 as u32 * 2,
+        height: image_size.1 / terminal_size.1 as u32 * 1,
     };
 
     return cluster;
@@ -81,12 +81,16 @@ fn to_ascii(image_path: &str, colour: bool) -> Result<String, image::ImageError>
     while image_size.1 >= y + cluster.height {
         let mut x = 0;
         while image_size.0 >= x + cluster.width {
-            let brightness = get_brightness_of_cluster(&image, x, y, cluster.width, cluster.height);
+            let mut brightness =
+                get_brightness_of_cluster(&image, x, y, cluster.width, cluster.height);
+            if colour {
+                brightness = 0
+            }
 
             let letter = pick_char_from_palette(brightness, 255, &palette);
-            if colour == true {
+            if colour {
                 let rgb = get_colour_of_cluster(&image, x, y, cluster.width, cluster.height);
-                let colored_letter = letter.to_string().truecolor(
+                let colored_letter = letter.to_string().on_truecolor(
                     rgb.0[0].try_into().unwrap(),
                     rgb.0[1].try_into().unwrap(),
                     rgb.0[2].try_into().unwrap(),
