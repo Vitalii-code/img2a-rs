@@ -1,4 +1,4 @@
-use super::*;
+use crate::convert::to_ascii;
 use image::flat::Error;
 use rand::prelude::*;
 use std::path::Path;
@@ -10,7 +10,7 @@ fn my_test() {
             let img_path = format!("imgs/{}x{}_image.png", w, h);
             generate(&img_path, (w, h)).unwrap();
             println!("{}", img_path);
-            to_ascii(&img_path, false);
+            to_ascii(&img_path, false).unwrap();
         }
     }
 }
