@@ -6,6 +6,17 @@ use terminal_size::{terminal_size, Height, Width};
 #[cfg(test)]
 mod test;
 
+const HELP: &str = "
+Usage: img2a [option] [images...]
+
+Options:
+  -h, --help
+          Print help information
+
+  --colour, --color
+          By default the output will be colourless, use this flag to add colour
+";
+
 fn main() {
     // collect args
     let args: Vec<String> = env::args().collect();
@@ -13,11 +24,14 @@ fn main() {
     // if there is no args print error
     if args.len() <= 1 {
         eprintln!("No arguments");
+        println!("{}", HELP);
     } else {
         let mut colour = false;
         for arg in args.iter().skip(1) {
             if arg == "--colour" || arg == "--color" {
                 colour = true
+            } else if arg == "-h" || arg == "--help" {
+                println!("{}", HELP);
             } else {
                 let ascii = to_ascii(&arg, colour);
                 println!("{}", ascii)
