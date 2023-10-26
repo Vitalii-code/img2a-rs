@@ -10,7 +10,7 @@ fn my_test() {
             let img_path = format!("imgs/{}x{}_image.png", w, h);
             generate(&img_path, (w, h)).unwrap();
             println!("{}", img_path);
-            to_ascii(&img_path);
+            to_ascii(&img_path, false);
         }
     }
 }

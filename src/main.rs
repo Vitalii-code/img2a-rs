@@ -1,4 +1,5 @@
-use image::{DynamicImage, GenericImageView, Pixel};
+use colored::*;
+use image::{DynamicImage, GenericImageView, Pixel, Rgb};
 use std::env;
 use terminal_size::{terminal_size, Height, Width};
 
@@ -13,8 +14,14 @@ fn main() {
     if args.len() <= 1 {
         eprintln!("No arguments");
     } else {
+        let mut colour = false;
         for arg in args.iter().skip(1) {
-            to_ascii(&arg);
+            if arg == "--colour" || arg == "--color" {
+                colour = true
+            } else {
+                let ascii = to_ascii(&arg, colour);
+                println!("{}", ascii)
+            }
         }
     }
 }
@@ -25,34 +32,32 @@ struct Cluster {
 }
 
 fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
+    // someone please fix this function!!!
+
     // calculating cluster size
     let terminal_size = get_terminal_size();
-
-    // we need to get image resolution ratio
-    // let ratio = image_size.0 as f64 / image_size.1 as f64;
 
     if terminal_size.0 as u32 >= image_size.0 || terminal_size.1 as u32 >= image_size.1 {
         return Cluster {
             width: 1,
-            height: 1,
+            height: 2,
         };
     }
 
     let cluster = Cluster {
         width: image_size.0 / terminal_size.0 as u32 * 2,
-        height: image_size.1 / terminal_size.1 as u32 * 3,
+        height: image_size.1 / terminal_size.1 as u32 * 2,
     };
 
     return cluster;
 }
 
-fn to_ascii(image_path: &str) {
-    let image = match image::open(image_path) {
-        Ok(image) => image,
-        Err(e) => return eprintln!("{}", e),
-    };
+fn to_ascii(image_path: &str, colour: bool) -> String {
+    let mut ascii = String::new();
 
-    let palette: String = " .:-=+*#%@".to_string();
+    let image = image::open(image_path).unwrap();
+
+    let palette = String::from(" .:-=+*#%@");
     let image_size = image.dimensions();
     let cluster: Cluster = calculate_clustersize(image_size);
 
@@ -62,12 +67,25 @@ fn to_ascii(image_path: &str) {
         while image_size.0 >= x + cluster.width {
             let brightness = get_brightness_of_cluster(&image, x, y, cluster.width, cluster.height);
 
-            print!("{}", pick_char_from_palette(brightness, 255, &palette));
+            let letter = pick_char_from_palette(brightness, 255, &palette);
+            if colour == true {
+                let rgb = get_colour_of_cluster(&image, x, y, cluster.width, cluster.height);
+                let colored_letter = letter.to_string().truecolor(
+                    rgb.0[0].try_into().unwrap(),
+                    rgb.0[1].try_into().unwrap(),
+                    rgb.0[2].try_into().unwrap(),
+                );
+                ascii = format!("{}{}", ascii, colored_letter);
+            } else if colour == false {
+                ascii.push(letter);
+            };
             x += cluster.width;
         }
-        println!();
+        ascii.push('\n');
         y += cluster.height;
     }
+
+    return ascii;
 }
 
 fn pick_char_from_palette(value: usize, max_value: usize, palette: &String) -> char {
@@ -82,6 +100,38 @@ fn pick_char_from_palette(value: usize, max_value: usize, palette: &String) -> c
     }
 }
 
+fn get_colour_of_cluster(
+    image: &DynamicImage,
+    x: u32,
+    y: u32,
+    cluster_width: u32,
+    cluster_height: u32,
+) -> Rgb<u32> {
+    // this function return medium colour of cluster of pixels
+
+    let list_size: usize = (cluster_width * cluster_height) as usize;
+    let mut list_of_colours: Vec<Rgb<u8>> = Vec::with_capacity(list_size);
+
+    for y in y..y + cluster_height {
+        for x in x..x + cluster_width {
+            let pixel_colour = image.get_pixel(x, y).to_rgb();
+            list_of_colours.push(pixel_colour);
+        }
+    }
+
+    let mut sums: (u32, u32, u32) = (0, 0, 0);
+    for pixel in list_of_colours.iter() {
+        sums.0 = sums.0 + pixel.0[0] as u32;
+        sums.1 = sums.1 + pixel.0[1] as u32;
+        sums.2 = sums.2 + pixel.0[2] as u32;
+    }
+    let avg_r: u32 = (sums.0 as usize / list_size).try_into().unwrap();
+    let avg_g: u32 = (sums.1 as usize / list_size).try_into().unwrap();
+    let avg_b: u32 = (sums.2 as usize / list_size).try_into().unwrap();
+
+    return Rgb::from([avg_r, avg_g, avg_b]);
+}
+
 fn get_brightness_of_cluster(
     image: &DynamicImage,
     x: u32,
@@ -91,21 +141,17 @@ fn get_brightness_of_cluster(
 ) -> usize {
     // this function return medium brightness of cluster of pixels
     let list_size: usize = (cluster_width * cluster_height) as usize;
-    let mut list_of_lums = Vec::with_capacity(list_size);
+    let mut list_of_lums: Vec<u32> = Vec::with_capacity(list_size);
 
     for y in y..y + cluster_height {
         for x in x..x + cluster_width {
             let pixel = image.get_pixel(x, y).to_luma();
-            list_of_lums.push(pixel.0[0]);
+            list_of_lums.push(pixel.0[0] as u32);
         }
     }
 
-    let mut sum: usize = 0;
-    for i in list_of_lums.iter() {
-        sum = sum + *i as usize;
-    }
-
-    return sum / list_of_lums.len();
+    let sum: u32 = list_of_lums.iter().sum();
+    return sum as usize / list_size;
 }
 
 fn get_terminal_size() -> (u16, u16) {
