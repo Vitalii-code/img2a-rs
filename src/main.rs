@@ -19,6 +19,8 @@ Options:
 fn main() {
     // collect args
     let args: Vec<String> = env::args().collect();
+    let palette = String::from(" .:-=+*#%@");
+
     // let mut clipboard = Clipboard::new().unwrap();
     // clipboard.set_text(ascii).unwrap();
 
@@ -34,9 +36,8 @@ fn main() {
             } else if arg == "-h" || arg == "--help" {
                 println!("{}", HELP);
             } else {
-                match to_ascii(&arg, colour) {
+                match to_ascii(&arg, &palette, colour) {
                     Ok(ascii) => println!("{}", ascii),
-
                     Err(e) => eprintln!("{} occurred during convertation of '{}'", e, arg),
                 };
             }

@@ -17,12 +17,15 @@ pub fn get_terminal_size() -> (u16, u16) {
     }
 }
 
-pub fn to_ascii(image_path: &str, colour: bool) -> Result<String, image::ImageError> {
+pub fn to_ascii(
+    image_path: &str,
+    palette: &String,
+    colour: bool,
+) -> Result<String, image::ImageError> {
     let mut ascii = String::new();
 
     let image = image::open(image_path)?;
 
-    let palette = String::from(" .:-=+*#%@");
     let image_size = image.dimensions();
     let cluster: Cluster = calculate_clustersize(image_size);
 
