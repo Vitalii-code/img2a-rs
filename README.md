@@ -86,5 +86,5 @@ Options:
 # Todo
 - [ ] Revork argument parsing with "clap" crate
 - [ ] Add the ability to copy output straight to the clipboard
-- [ ] Add the ability to set your own pallette
+- [ ] Add the ability to set your own palette
 
