@@ -9,7 +9,7 @@ mod test;
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-    /// Sets your cusom palette
+    /// Specifies the custom palette for visual representation.
     #[arg(short, long, default_value_t=String::from(" .:-=+*#%@"))]
     palette: String,
 
@@ -21,13 +21,16 @@ struct Cli {
     #[arg(short, long, short = 'c', default_value_t = false)]
     copy: bool,
 
-    /// path to your image or images
+    /// Path to your image or images
     images: Vec<String>,
 }
 
 fn main() {
     // collect args
     let cli = Cli::parse();
+    if cli.images.is_empty() {
+        eprintln!("No arguments. Try 'img2a --help' for more information.");
+    };
 
     // iterate through images
     for image in cli.images.iter() {
