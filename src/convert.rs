@@ -22,8 +22,8 @@ pub fn to_ascii(
     palette: &String,
     colour: bool,
 ) -> Result<String, image::ImageError> {
-    let mut ascii = String::new();
-
+    let mut ascii_colored = String::new();
+    let mut ascii: Vec<char> = Vec::new();
     let image = image::open(image_path)?;
 
     let image_size = image.dimensions();
@@ -36,7 +36,7 @@ pub fn to_ascii(
             if colour {
                 let rgb = get_colour_of_cluster(&image, x, y, cluster.width, cluster.height);
                 let colored_letter = " ".to_string().on_truecolor(rgb[0], rgb[1], rgb[2]);
-                ascii = format!("{}{}", ascii, colored_letter);
+                ascii_colored = format!("{}{}", ascii_colored, colored_letter);
             } else {
                 let brightness =
                     get_brightness_of_cluster(&image, x, y, cluster.width, cluster.height);
@@ -46,10 +46,15 @@ pub fn to_ascii(
             x += cluster.width;
         }
         ascii.push('\n');
+        ascii_colored.push('\n');
         y += cluster.height;
     }
 
-    return Ok(ascii);
+    if colour {
+        return Ok(ascii_colored);
+    } else {
+        return Ok(ascii.iter().collect::<String>());
+    }
 }
 
 fn get_colour_of_cluster(
