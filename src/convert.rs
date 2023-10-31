@@ -67,7 +67,7 @@ fn get_colour_of_cluster(
     cluster_width: u32,
     cluster_height: u32,
 ) -> Rgb<u32> {
-    // this function return medium colour of cluster of pixels
+    // this function return an average colour of cluster of pixels
 
     let list_size: usize = (cluster_width * cluster_height) as usize;
     let mut list_of_colours: Vec<Rgb<u8>> = Vec::with_capacity(list_size);
