@@ -33,22 +33,14 @@ pub fn to_ascii(
     while image_size.1 >= y + cluster.height {
         let mut x = 0;
         while image_size.0 >= x + cluster.width {
-            let mut brightness =
-                get_brightness_of_cluster(&image, x, y, cluster.width, cluster.height);
-            if colour {
-                brightness = 0
-            }
-
-            let letter = pick_char_from_palette(brightness, 255, &palette);
             if colour {
                 let rgb = get_colour_of_cluster(&image, x, y, cluster.width, cluster.height);
-                let colored_letter = letter.to_string().on_truecolor(
-                    rgb.0[0].try_into().unwrap(),
-                    rgb.0[1].try_into().unwrap(),
-                    rgb.0[2].try_into().unwrap(),
-                );
+                let colored_letter = " ".to_string().on_truecolor(rgb[0], rgb[1], rgb[2]);
                 ascii = format!("{}{}", ascii, colored_letter);
-            } else if colour == false {
+            } else {
+                let brightness =
+                    get_brightness_of_cluster(&image, x, y, cluster.width, cluster.height);
+                let letter = pick_char_from_palette(brightness, 255, &palette);
                 ascii.push(letter);
             };
             x += cluster.width;
@@ -66,7 +58,7 @@ fn get_colour_of_cluster(
     y: u32,
     cluster_width: u32,
     cluster_height: u32,
-) -> Rgb<u32> {
+) -> Vec<u8> {
     // this function return an average colour of cluster of pixels
 
     let list_size: usize = (cluster_width * cluster_height) as usize;
@@ -79,17 +71,17 @@ fn get_colour_of_cluster(
         }
     }
 
-    let mut sums: (u32, u32, u32) = (0, 0, 0);
+    let mut sums: (usize, usize, usize) = (0, 0, 0);
     for pixel in list_of_colours.iter() {
-        sums.0 = sums.0 + pixel.0[0] as u32;
-        sums.1 = sums.1 + pixel.0[1] as u32;
-        sums.2 = sums.2 + pixel.0[2] as u32;
+        sums.0 = sums.0 + pixel.0[0] as usize;
+        sums.1 = sums.1 + pixel.0[1] as usize;
+        sums.2 = sums.2 + pixel.0[2] as usize;
     }
-    let avg_r: u32 = (sums.0 as usize / list_size).try_into().unwrap();
-    let avg_g: u32 = (sums.1 as usize / list_size).try_into().unwrap();
-    let avg_b: u32 = (sums.2 as usize / list_size).try_into().unwrap();
+    let avg_r: u8 = (sums.0 as usize / list_size) as u8;
+    let avg_g: u8 = (sums.1 as usize / list_size) as u8;
+    let avg_b: u8 = (sums.2 as usize / list_size) as u8;
 
-    return Rgb::from([avg_r, avg_g, avg_b]);
+    return vec![avg_r, avg_g, avg_b];
 }
 
 fn get_brightness_of_cluster(
