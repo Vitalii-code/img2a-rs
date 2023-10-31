@@ -143,6 +143,6 @@ fn pick_char_from_palette(value: usize, max_value: usize, palette: &String) -> c
         char = char.ceil();
         let char = value as usize / char as usize;
 
-        return palette.chars().nth(char).unwrap();
+        return palette.chars().nth(char).unwrap_or(' ');
     }
 }
