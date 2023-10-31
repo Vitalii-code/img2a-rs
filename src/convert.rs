@@ -135,14 +135,12 @@ fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
     return cluster;
 }
 
-fn pick_char_from_palette(value: usize, max_value: usize, palette: &String) -> char {
-    if value > max_value {
-        panic!("The value is higher than the max value")
+fn pick_char_from_palette(index: usize, max_index: usize, palette: &String) -> char {
+    if index > max_index {
+        panic!("The index is higher than the max index");
     } else {
-        let mut char = max_value as f64 / palette.len() as f64;
-        char = char.ceil();
-        let char = value as usize / char as usize;
-
-        return palette.chars().nth(char).unwrap_or(' ');
+        let palette_length = palette.len();
+        let index_in_palette = max_index / palette_length;
+        return palette.chars().nth(index / index_in_palette).unwrap_or(' ');
     }
 }
