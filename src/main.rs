@@ -26,8 +26,7 @@ fn main() {
 
     // if there is no args print error
     if args.len() <= 1 {
-        eprintln!("No arguments");
-        println!("{}", HELP);
+        eprintln!("Try 'img2a --help' for more information.");
     } else {
         let mut colour = false;
         for arg in args.iter().skip(1) {
