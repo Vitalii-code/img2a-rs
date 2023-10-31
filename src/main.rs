@@ -1,45 +1,50 @@
-use std::env;
 mod convert;
 use crate::convert::to_ascii;
+use arboard::Clipboard;
+use clap::Parser;
 #[cfg(test)]
 mod test;
-// use arboard::Clipboard;
 
-const HELP: &str = "
-Usage: img2a [option] [images...]
+/// Simple program to greet a person
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// Sets your cusom palette
+    #[arg(short, long, default_value_t=String::from(" .:-=+*#%@"))]
+    palette: String,
 
-Options:
-  -h, --help
-          Print help information
+    /// Makes your image colored
+    #[arg(long, default_value_t = false)]
+    colour: bool,
 
-  --colour, --color
-          By default the output will be colourless, use this flag to add colour
-";
+    /// Copies your converted image to your clipboard
+    #[arg(short, long, short = 'c', default_value_t = false)]
+    copy: bool,
+
+    /// path to your image or images
+    images: Vec<String>,
+}
 
 fn main() {
     // collect args
-    let args: Vec<String> = env::args().collect();
-    let palette = String::from(" .:-=+*#%@");
+    let cli = Cli::parse();
 
-    // let mut clipboard = Clipboard::new().unwrap();
-    // clipboard.set_text(ascii).unwrap();
+    // iterate through images
+    for image in cli.images.iter() {
+        match to_ascii(&image, &cli.palette, cli.colour) {
+            Ok(ascii) => {
+                if cli.copy {
+                    match Clipboard::new() {
+                        Ok(mut clipboard) => clipboard.set_text(&ascii).unwrap(),
+                        Err(e) => eprintln!("{}", e),
+                    };
+                } else {
+                    println!("{}", ascii)
+                }
+            }
+            Err(e) => eprintln!("{} occurred during convertation of '{}'", e, image),
+        };
+    }
 
     // if there is no args print error
-    if args.len() <= 1 {
-        eprintln!("Try 'img2a --help' for more information.");
-    } else {
-        let mut colour = false;
-        for arg in args.iter().skip(1) {
-            if arg == "--colour" || arg == "--color" {
-                colour = true
-            } else if arg == "-h" || arg == "--help" {
-                println!("{}", HELP);
-            } else {
-                match to_ascii(&arg, &palette, colour) {
-                    Ok(ascii) => println!("{}", ascii),
-                    Err(e) => eprintln!("{} occurred during convertation of '{}'", e, arg),
-                };
-            }
-        }
-    }
 }
