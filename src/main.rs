@@ -14,7 +14,7 @@ struct Cli {
     palette: String,
 
     /// Makes your image colored
-    #[arg(long, default_value_t = false)]
+    #[arg(long, visible_alias = "color", default_value_t = false)]
     colour: bool,
 
     /// Copies your converted image to your clipboard
@@ -29,7 +29,9 @@ fn main() {
     // collect args
     let cli = Cli::parse();
     if cli.images.is_empty() {
-        eprintln!("No arguments. Try 'img2a --help' for more information.");
+        eprintln!(
+            "You need to input your image(s). Please run 'img2a --help' for more information."
+        );
     };
 
     // iterate through images
