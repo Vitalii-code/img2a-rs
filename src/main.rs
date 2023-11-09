@@ -22,20 +22,20 @@ struct Cli {
     copy: bool,
 
     /// Path to your image or images
-    images: Vec<String>,
+    file: Vec<String>,
 }
 
 fn main() {
     // collect args
     let cli = Cli::parse();
-    if cli.images.is_empty() {
+    if cli.file.is_empty() {
         eprintln!(
             "You need to input your image(s). Please run 'img2a --help' for more information."
         );
     };
 
     // iterate through images
-    for image in cli.images.iter() {
+    for image in cli.file.iter() {
         match to_ascii(&image, &cli.palette, cli.colour) {
             Ok(ascii) => {
                 if cli.copy {
@@ -50,6 +50,4 @@ fn main() {
             Err(e) => eprintln!("{} occurred during convertation of '{}'", e, image),
         };
     }
-
-    // if there is no args print error
 }
