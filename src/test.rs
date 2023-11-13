@@ -4,17 +4,10 @@ use rand::prelude::*;
 use std::path::Path;
 
 #[test]
-fn my_test() {
-    for w in (1..100).step_by(6) {
-        for h in (1..100).step_by(8) {
-            let img_path = format!("imgs/{}x{}_image.png", w, h);
-            generate(&img_path, (w, h)).unwrap();
-            println!("{}", img_path);
-            let palette = String::from(" .:-=+*#%@");
-
-            to_ascii(&img_path, &palette, false).unwrap();
-        }
-    }
+fn convert_local_images() {
+    let palette = String::from(" .:-=+*#%@");
+    let imgs_folder = "imgs/apple01.jpg";
+    to_ascii(imgs_folder, &palette, false).unwrap();
 }
 
 fn generate(path: &str, image_size: (u32, u32)) -> Result<(), Error> {
