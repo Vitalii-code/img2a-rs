@@ -19,6 +19,6 @@ jobs:
     - name: Build
       run: cargo build --release
     - uses: actions/upload-artifact@v3
-    with:
-      name: img2a-linux
-      path: target/release/img2a
+      with:
+        name: img2a-linux
+        path: target/release/img2a
