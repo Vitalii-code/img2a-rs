@@ -6,8 +6,8 @@ use std::path::Path;
 #[test]
 fn convert_local_images() {
     let palette = String::from(" .:-=+*#%@");
-    let imgs_folder = "imgs/apple01.jpg";
-    to_ascii(imgs_folder, &palette, false).unwrap();
+    let img = "imgs/apple01.jpg";
+    to_ascii(img, &palette, false).unwrap();
 }
 
 fn generate(path: &str, image_size: (u32, u32)) -> Result<(), Error> {
