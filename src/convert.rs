@@ -113,23 +113,18 @@ fn get_brightness_of_cluster(
 
 fn calculate_clustersize(image_size: (u32, u32)) -> Cluster {
     // someone please fix this function!!!
-
     // calculating cluster size
     let terminal_size = get_terminal_size();
 
-    if terminal_size.0 as u32 >= image_size.0 || terminal_size.1 as u32 >= image_size.1 {
-        return Cluster {
-            width: 1,
-            height: 2,
-        };
-    }
+    let image_ratio: f64 = image_size.1 as f64 / image_size.0 as f64;
 
-    let cluster = Cluster {
-        width: image_size.0 / terminal_size.0 as u32 * 2,
-        height: image_size.1 / terminal_size.1 as u32 * 1,
-    };
+    let terminal_ratio = terminal_size.0 as f64 * 6.0 / (terminal_size.1 as f64 * 8.0);
+    let average_ratio = (image_ratio * terminal_ratio).sqrt();
 
-    return cluster;
+    let width = (image_size.0 as f64 / terminal_size.0 as f64 * average_ratio).ceil() as u32;
+    let height = (image_size.1 as f64 / terminal_size.1 as f64).ceil() as u32;
+
+    return Cluster { width, height };
 }
 
 fn pick_char_from_palette(index: usize, max_index: usize, palette: &String) -> char {
